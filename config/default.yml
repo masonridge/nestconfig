@@ -1,0 +1,156 @@
+# Configuration is handled via the node-config library.
+# Each of the configuration files are read and merged together based
+# on the provided file names.
+#
+# For example, with the following two files, fields in production.yml
+# will override fields in default.yml. However, the production file will
+# only be read if running in production mode (NODE_ENV=production).
+# - default.yml
+# - production.yml
+#
+# When setting up the configuration for a particular project or server,
+# it is advised to not touch any of the default config files, but to instead
+# create a new file called <hostname>-production.yml or <hostname>-development.yml.
+# With this setup, the configuration values will only be read if the hostname
+# of the current system matches the filename. This is intended to prevent mistakes
+# from copying production and development files to the wrong servers.
+#
+# It is also possible to set any of these configuration values using environment
+# variables defined in custom-environment-variables.yml.
+#
+# See https://github.com/lorenwest/node-config/wiki for more information
+
+# The version value is used for the api url prefix
+# and should not be changed unless a major api change occurs.
+version: v1
+
+server:
+  name: DIT API
+  # The hostname or IP on which to bind the web server.
+  # See https://nodejs.org/api/net.html#net_server_listen
+  hostname: localhost
+  # The port on which to bind the web server.
+  # Omit or set to 0 to automatically assign.
+  # See https://nodejs.org/api/net.html#net_server_listen
+  port: 3000
+  # When run behind a proxy, this enables the proper headers to be forwarded.
+  # For security reasons, do not set to true when not behind a proxy.
+  # See http://expressjs.com/en/guide/behind-proxies.html
+  # Default to 'loopback' (trust 127.0.0.1/8, ::1/128) since the typical setup
+  # uses an Apache reverse-proxy on the local machine.
+  trustProxy: loopback
+
+# Enable optional feature modules.
+# If omitted, a module's routes will return 404: not found.
+modules:
+  - picking
+  - printing
+  - sortation
+
+db:
+  # See https://typeorm.io/#/connection-options for database config options
+  global:
+    type: mssql
+    # specify host_name\instance_name
+    host: localhost
+    username: df
+    password:
+    database: DirectorIT_Global
+    extra:
+      trustServerCertificate: true
+    options:
+      useUTC: true
+      # identifies the connection in SQL Profiler, defaults to `node-mssql`
+      appName: dit-api-global
+    # WARNING - do not use in production
+    # setting synchronize to true will alter your database schema
+    synchronize: false
+    # log queries
+    logging: false
+  sortation:
+    type: mssql
+    host: localhost
+    username: SortD
+    password:
+    database: DirectorIT_Sorting
+    extra:
+      trustServerCertificate: true
+    options:
+      useUTC: true
+      appName: dit-api-sorting
+    synchronize: false
+    logging: false
+  picking:
+    type: mssql
+    host: localhost
+    username: PickDirector
+    password:
+    database: DirectorIT_Picking
+    extra:
+      trustServerCertificate: true
+    options:
+      useUTC: true
+      appName: dit-api-picking
+    synchronize: false
+    logging: false
+
+md:
+  connections:
+    default:
+      hostname: 'localhost'
+      port: 7342
+      filter: "ST = 'DIT API'"
+      pt: 'DIT API'
+
+auth:
+  # if enabled, will check if a user is logged in before performing a request
+  authenticate: true
+  # if enabled, will check if a user has permission to perform a request
+  validateClaims: true
+  jwt:
+    # token expiration - see https://github.com/zeit/ms for formatting options
+    expiresIn: 1h
+    # The secret value is used to sign the jwt tokens
+    # This MUST NOT be shared and should be set uniquely for each project
+    # Intentionally left blank
+    secret:
+
+logging:
+  file:
+    enabled: true
+    # error, warn, info, http, verbose, debug, silly
+    level: info
+    file: logs/dit-api.log
+    # log uncaught exceptions
+    exceptionsFile: logs/dit-api.error.log
+    maxFileSizeBytes: 10485760 # 10 MiB
+    maxFileCount: 10
+  console:
+    enabled: true
+    level: info
+
+swagger:
+  path: 'docs'
+
+# Application Control web service
+# Typically hosted on port 20101
+# Used for querying and maintaining running applications
+applicationControlHostname: http://127.0.0.1:20101
+
+documents:
+  documentsPath: 'C:\temp\UploadedDocuments'
+  maxFileSizeBytes: 5000
+
+# Comm Status web service
+# Used for querying service status information
+# Default kestrel ports are 5000 (http) and 5001 (https)
+commStatus:
+  hostname: http://127.0.0.1:30139
+  version: '2.0'
+  # How often to refresh data from the status monitor
+  pollIntervalMs: 5000
+
+# SSO Defaults (multiple groups can be specified by delimiting with a comma)
+ssoDefaults:
+  password: ''
+  groups: view-only

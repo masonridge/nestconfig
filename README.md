@@ -7,6 +7,13 @@
 - read prod, dev
 - read .yml config
 - validation
+- use config yml instead of .env
+
+- usermaintenance
+- auth
+- test
+- jwt
+- refresh-token
 
 # Issues with current
 
@@ -30,3 +37,10 @@ npm i cross-env
 npm install --save joi
 
 <!-- https://discordapp.com/channels/520622812742811698/1077272273418981539/1077272273418981539 -->
+
+for user auth
+
+```js
+ npm i @nestjs/typeorm typeorm mssql
+ npm i config
+```

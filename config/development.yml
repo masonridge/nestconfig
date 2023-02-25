@@ -1,0 +1,25 @@
+# Configuration is handled via the node-config library.
+# Each of the configuration files are read and merged together based
+# on the provided file names.
+#
+# For example, with the following two files, fields in production.yml
+# will override fields in default.yml. However, the production file will
+# only be read if running in production mode (NODE_ENV=production).
+# - default.yml
+# - production.yml
+#
+# When setting up the configuration for a particular project or server,
+# it is advised to not touch any of the default config files, but to instead
+# create a new file called <hostname>-production.yml or <hostname>-development.yml.
+# With this setup, the configuration values will only be read if the hostname
+# of the current system matches the filename. This is intended to prevent mistakes
+# from copying production and development files to the wrong servers.
+#
+# It is also possible to set any of these configuration values using environment
+# variables defined in custom-environment-variables.yml.
+#
+# See https://github.com/lorenwest/node-config/wiki for more information
+
+# The version value is used for the api url prefix
+# and should not be changed unless a major api change occurs.
+version: test
